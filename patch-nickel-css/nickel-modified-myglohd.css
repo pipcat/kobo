@@ -1,0 +1,93 @@
+/* found: 12 (zlib) pos: 4a1388 */
+/* [MOD]: Enabled games in Beta features */
+#spacerWidget,
+#description {
+  padding-right: 20px;
+  padding-top: 20px;
+}
+
+#boggleContainer,
+#solitaireContainer,
+#rushHourContainer,
+#browserContainer,
+#sudokuContainer,
+#sketchPadContainer {
+  qproperty-bottomMargin: 30;
+}
+
+#boggleDescription,
+#solitaireDescription,
+#rushHourDescription,
+#browserDescription,
+#sudokuDescription,
+#scribbleDescription {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+/* To test which conditions are set on a device:  */
+/* GloHd : qApp_deviceIsDragon="true", qApp_deviceIsAlyssum="true" */
+/*
+#boggleContainer[qApp_deviceIsTrilogy="true"] { qproperty-visible: false; }
+#solitaireContainer[qApp_deviceIsPhoenix="true"] { qproperty-visible: false; }
+#rushHourContainer[qApp_deviceIsDragon="true"] { qproperty-visible: false; }
+#browserContainer[qApp_deviceIsAlyssum="true"] { qproperty-visible: false; }
+#sudokuContainer[qApp_deviceIsPika="true"] { qproperty-visible: false; }
+#sketchPadContainer[qApp_deviceIsTrilogy="true"] { qproperty-visible: false; }
+*/
+
+
+/* found: 16 (nozlib) pos: 4a192a */
+/* [MOD]: Increased dictionary view */
+#InlineDictionaryView {
+	min-width: 980px;
+	max-width: 980px;
+	min-height: 400px;
+	max-height: 400px;
+}
+
+
+/* found: 9 (zlib) pos: 4a0b96 */
+/* [MOD]: Removed cover border in small thumbnails (recent and new books) */
+* {
+  background-color: transparent;
+}
+
+SmallRecentBookTile {
+  font-size: 26px;
+  font-family: Georgia;
+  qproperty-percentFontSize: 39;
+  qproperty-progressFontSize: 30;
+  qproperty-coverBorder: 0;
+}
+
+#progress {
+  font-family: Georgia;
+  font-size: 30px;
+}
+
+
+/* found: 28 (zlib) pos: 4a3061 */
+/* [MOD]: Removed cover border in most recent book thumbnail */
+#RecentBookTile {
+  qproperty-percentFontSize: 39;
+  qproperty-progressFontSize: 30;
+  qproperty-topMargin: 20;
+  qproperty-coverBorder: 0;
+}
+
+#recentBookTileInfo {
+  background-color: transparent;
+  qproperty-topMargin: 10;
+  qproperty-bottomMargin: 15;
+}
+
+#annotation {
+  min-height: 75px;
+  max-height: 75px;
+}
+
+QLabel {
+  background-color: transparent;
+}
+
