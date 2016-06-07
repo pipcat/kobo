@@ -11,6 +11,7 @@ import zlib
 import os
 import struct
 from jsmin import jsmin
+import re
 
 
 def make_executable(path):
@@ -48,9 +49,35 @@ def get_changes(pos, found, zlibtype) :
 		pos2 -= 2 # remove \n\n added by extract
 	return data_changes[pos1:pos2]
 
+# replaces \n and \t to text
+def clean_badeyes(txt):
+	return txt.replace('\n', '\\n').replace('\t', '\\t')
+
+# Create patch in bad-eyes format
+def fill_badeyes_patch(pos, found, zlibtype, stream, new_stream) :
+	action = 'replace_zlib' if zlibtype == 'zlib' else 'replace_string'
+	badpos = pos if zlibtype == 'zlib' else pos + 4 # for non-compressed streams, badeyes pos is after four-bytes size.
+	patch_badeyes = '<patch>\nname=%X (found %d, %s)\nenabled=true\naction=%s\nposition=autodetect\n' % (badpos, found, zlibtype, action)
+	matchObj = re.findall( r'[^\{]*\{[^\}]*\}\n*', stream)
+	lines = ''
+	for line in matchObj:
+		lines += 'oldpart=%s\n' % clean_badeyes(line)
+	patch_badeyes += lines
+	if new_stream == '':
+		patch_badeyes += lines.replace('oldpart=', 'newpart=')
+	else:
+		matchObj = re.findall( r'[^\{]*\{[^\}]*\}\n*', new_stream)
+		for line in matchObj:
+			patch_badeyes += 'newpart=%s\n' % clean_badeyes(line)
+	patch_badeyes += 'combineparts\n</patch>\n\n'
+	return patch_badeyes
+
 
 # MAIN
-def zipstreams(op, filename, extract_to, filename_patched, patch_from) :
+# op: 'extract' or 'patch'. op_type: 'css' or 'badeyes'. filename: nickel binaries.
+# 'extract' needs => extract_to: css/txt to generate.
+# 'patch' needs => filename_patched: nickel/txt to generate. patch_from: css read with modifications.
+def zipstreams(op, op_type, filename, extract_to, filename_patched, patch_from) :
 	global data_changes
 
 	if op == 'patch':
@@ -83,8 +110,8 @@ def zipstreams(op, filename, extract_to, filename_patched, patch_from) :
 						found += 1
 						found_zlib += 1
 						if op == 'extract':
-							css_all += '/* found: %d (zlib) pos: %x */\n' % (found, pos)
-							css_all += stream + '\n\n'
+							css_all += '/* found: %d (zlib) pos: %x */\n%s\n\n' % (found, pos, stream) if op_type == 'css' else fill_badeyes_patch(pos, found, 'zlib', stream, '')
+
 						elif op == 'patch':
 							stream_modif = get_changes(pos, found, 'zlib')
 							if stream_modif != '' and stream_modif != stream:
@@ -105,16 +132,22 @@ def zipstreams(op, filename, extract_to, filename_patched, patch_from) :
 										print 'css code too long but minified is ok. Reduced %d chars.' % (len_modif - len_mini)
 										len_modif = len_mini
 										modif_compressed = mini_compressed
+										stream_modif = modif_mini
 
-								if len_modif == len_stream:
-									data = data[:pos] + modif_compressed + data[pos+len_stream:]
-									print 'OK, compressed code after modification is same size.'
+								if op_type == 'badeyes' and len_modif <= len_stream:
+									css_all += fill_badeyes_patch(pos, found, 'zlib', stream, stream_modif)
+									print 'OK, css stream size is not longer.'
 									found_modif += 1
-								elif len_modif < len_stream:
-									dif_len = len_stream - len_modif
-									data = data[:pos] + modif_compressed+('\x00' * dif_len) + data[pos+len_stream:]
-									print 'OK, compressed code after modification is shorter. Padded with %d nulls.' % dif_len
-									found_modif += 1
+								else:
+									if len_modif == len_stream:
+										data = data[:pos] + modif_compressed + data[pos+len_stream:]
+										print 'OK, compressed code after modification is same size.'
+										found_modif += 1
+									elif len_modif < len_stream:
+										dif_len = len_stream - len_modif
+										data = data[:pos] + modif_compressed+('\x00' * dif_len) + data[pos+len_stream:]
+										print 'OK, compressed code after modification is shorter. Padded with %d nulls.' % dif_len
+										found_modif += 1
 
 			except:
 				pos = pos
@@ -129,8 +162,8 @@ def zipstreams(op, filename, extract_to, filename_patched, patch_from) :
 						found += 1
 						found_nozlib += 1
 						if op == 'extract':
-							css_all += '/* found: %d (nozlib) pos: %x */\n' % (found, pos)
-							css_all += stream + '\n\n'
+							css_all += '/* found: %d (nozlib) pos: %x */\n%s\n\n' % (found, pos, stream) if op_type == 'css' else fill_badeyes_patch(pos, found, 'nozlib', stream, '')
+
 						elif op == 'patch':
 							stream_modif = get_changes(pos, found, 'nozlib')
 							if stream_modif != '' and stream_modif != stream:
@@ -148,16 +181,21 @@ def zipstreams(op, filename, extract_to, filename_patched, patch_from) :
 										len_modif = len_mini
 										stream_modif = modif_mini
 
-								if len_modif == len_stream:
-									data = data[:pos+4] + stream_modif + data[pos+4+len_stream:]
-									print 'OK, css code after modification is same size.'
+								if op_type == 'badeyes' and len_modif <= len_stream:
+									css_all += fill_badeyes_patch(pos, found, 'nozlib', stream, stream_modif)
+									print 'OK, css stream size is not longer.'
 									found_modif += 1
-								elif len_modif < len_stream:
-									dif_len = len_stream - len_modif
-									# change bytes size
-									data = data[:pos] + struct.pack('>L', len_modif) + stream_modif+('\x00' * dif_len) + data[pos+4+len_stream:]
-									print 'OK, css code after modification is shorter. Padded with %d nulls and changed size.' % dif_len
-									found_modif += 1
+								else:
+									if len_modif == len_stream:
+										data = data[:pos+4] + stream_modif + data[pos+4+len_stream:]
+										print 'OK, css code after modification is same size.'
+										found_modif += 1
+									elif len_modif < len_stream:
+										dif_len = len_stream - len_modif
+										# change bytes size
+										data = data[:pos] + struct.pack('>L', len_modif) + stream_modif+('\x00' * dif_len) + data[pos+4+len_stream:]
+										print 'OK, css code after modification is shorter. Padded with %d nulls and changed size.' % dif_len
+										found_modif += 1
 
 						pos += 4 + len_stream
 			except:
@@ -169,13 +207,20 @@ def zipstreams(op, filename, extract_to, filename_patched, patch_from) :
 
 	# Show stats and Save css/nickel file
 	print '\n%d css streams found in %s. (%d in zlib, %d non-compressed)' % (found, filename, found_zlib, found_nozlib)
+
 	if op == 'extract':
 		save_file(extract_to, css_all)
-		print 'Saved to: %s\n' % extract_to
+		msg = 'Extracted css' if op_type == 'css' else 'Extracted bad-eyes'
+		print '%s saved to: %s\n' % (msg, extract_to)
+
 	elif op == 'patch':
-		save_file(filename_patched, data)
-		make_executable(filename_patched)
-		print '%d css streams modified. Patched nickel saved to: %s\n' % (found_modif, filename_patched)
+		if op_type == 'badeyes':
+			save_file(filename_patched, css_all)
+			print '%d css streams modified. Patched bad-eyes saved to: %s\n' % (found_modif, filename_patched)
+		else:
+			save_file(filename_patched, data)
+			make_executable(filename_patched)
+			print '%d css streams modified. Patched nickel saved to: %s\n' % (found_modif, filename_patched)
 
 
 # Functions:
@@ -185,9 +230,17 @@ MODIF_NICKEL  = 'nickel-modif'
 EXTRACTED_CSS = 'nickel-extracted.css'
 MODIFIED_CSS  = 'nickel-modified.css'
 
+EXTRACTED_BADEYES = 'nickel-extracted-badeyes.txt'
+MODIFIED_BADEYES  = 'nickel-modified-badeyes.txt'
+
 def extract(filename=SOURCE_NICKEL, extract_to=EXTRACTED_CSS) :
-	zipstreams('extract', filename, extract_to, '', '')
+	zipstreams('extract', 'css', filename, extract_to, '', '')
 
 def patch(filename=SOURCE_NICKEL, filename_patched=MODIF_NICKEL, patch_from=MODIFIED_CSS) :
-	zipstreams('patch', filename, '', filename_patched, patch_from)
+	zipstreams('patch', 'css', filename, '', filename_patched, patch_from)
 
+def extract_badeyes(filename=SOURCE_NICKEL, extract_to=EXTRACTED_BADEYES) :
+	zipstreams('extract', 'badeyes', filename, extract_to, '', '')
+
+def patch_badeyes(filename=SOURCE_NICKEL, filename_patched=MODIFIED_BADEYES, patch_from=MODIFIED_CSS) :
+	zipstreams('patch', 'badeyes', filename, '', filename_patched, patch_from)

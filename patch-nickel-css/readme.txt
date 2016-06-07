@@ -24,6 +24,11 @@ Tool to patch css styles inside nickel
 - Execute ./publish.sh to create KoboRoot.tgz, and copy to folder .kobo/ in your device.
 	For windows it should be a publish.bat (if you can do, please post it to include ;-)
 
+- If you want to prepare patches for bad-eyes from Tshering, replace last two steps with:
+	- Execute python patch_badeyes.py after you updated nickel-modified.css 
+	to generate	a .txt with your modified streams in bad-eyes patch format.
+	- You probably don't need that, but you can execute python extract_badeyes.py 
+	to generate a .txt with all streams unmodified in bad-eyes patch format.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -31,8 +36,8 @@ nickel-modified-myglohd.css is an example with some customizations for a Kobo Gl
 - /* [MOD]: Enabled games in Beta features */
 - /* [MOD]: Increased dictionary view */
 - /* [MOD]: Removed cover border in small thumbnails (recent and new books) */
-- /* [MOD]: Removed cover border in most recent book thumbnail */
 - /* [MOD]: Removed cover border in small thumbnails (added to library) */
+- /* [MOD]: Removed cover border in most recent book thumbnail */
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -111,3 +116,6 @@ v02:
 v03:
 - Manage all css streams in one single file.
 - Unified code for extracting and patching in a function.
+
+v04:
+- Option to extract and patch in bad-eyes patch format.
