@@ -51,7 +51,8 @@ def get_changes(pos, found, zlibtype) :
 
 # replaces \n and \t to text
 def clean_badeyes(txt):
-	return txt.replace('\n', '\\n').replace('\t', '\\t')
+	#return txt.replace('\n', '\\n').replace('\t', '\\t')
+	return txt.encode('string_escape')
 
 # Create patch in bad-eyes format
 def fill_badeyes_patch(pos, found, zlibtype, stream, new_stream) :
@@ -205,7 +206,7 @@ def zipstreams(op, op_type, filename, extract_to, filename_patched, patch_from) 
 		if pos >= len(data):
 			break
 
-	# Show stats and Save css/nickel file
+	# Show stats and Save extracted/patched file
 	print '\n%d css streams found in %s. (%d in zlib, %d non-compressed)' % (found, filename, found_zlib, found_nozlib)
 
 	if op == 'extract':
