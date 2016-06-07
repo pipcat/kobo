@@ -67,6 +67,38 @@ SmallRecentBookTile {
 }
 
 
+/* found: 15 (zlib) pos: 4a17bd */
+/* [MOD]: Removed cover border in small thumbnails (added to library) */
+* {
+  background-color: transparent;
+  color: black;
+}
+[colorTheme="darkGrey"] {
+  color: white;
+}
+#bookCoverListTile {
+  qproperty-itemPadding: 0;
+  qproperty-itemSpacing: 12;
+}
+#title {
+  font-style: italic;
+  font-size: 27px;
+}
+#description {
+  font-style: normal;
+  font-size: 26px;
+}
+#description[hasDescription="false"] {
+  qproperty-visible: false;
+}
+#description[colorTheme="darkGrey"] {
+  color: white;
+}
+#description[colorTheme="lightGrey"] {
+  color: black;
+}
+
+
 /* found: 28 (zlib) pos: 4a3061 */
 /* [MOD]: Removed cover border in most recent book thumbnail */
 #RecentBookTile {
