@@ -32,6 +32,7 @@ nickel-modified-myglohd.css is an example with some customizations for a Kobo Gl
 - /* [MOD]: Increased dictionary view */
 - /* [MOD]: Removed cover border in small thumbnails (recent and new books) */
 - /* [MOD]: Removed cover border in most recent book thumbnail */
+- /* [MOD]: Removed cover border in small thumbnails (added to library) */
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -43,6 +44,7 @@ http://www.mobileread.com/forums/showpost.php?p=3328586&postcount=2
 /* found: 3 (zlib) pos: 4a002b */    : font sizes only for qApp_deviceIsAlyssum (Glo Hd).
 /* found: 9 (zlib) pos: 4a0b96 */    : (smaller other recent book tiles, SmallRecentBookTile)
 /* found: 12 (zlib) pos: 4a1388 */   : related to Beta features (to enable/disable games).
+/* found: 15 (zlib) pos: 4a17bd */   : (Library recent books tile ,bookCoverListTile).
 /* found: 16 (nozlib) pos: 4a192a */ : #InlineDictionaryView (to increase frame size)
 /* found: 28 (zlib) pos: 4a3061 */   : (biggest most recent book tile, RecentBookTile)
 /* found: 31 (zlib) pos: 4a39b1 */   : (PocketRecentlyReadTile)
