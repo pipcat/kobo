@@ -13,7 +13,11 @@ Python scripts to translate Kobo interface.
 Python scripts to extract and patch all css streams inside nickel.
 * Extracts css streams (compressed or not) from nickel binaries.
 * Patch css streams with your own customizations, minifying them if needed.
+* Patch directly to nickel or creates patches files for bad-eyes pack.
 * Sample mods and info about css streams.
+
+## patch-images-png
+Python scripts to search, extract and patch png images inside binaries.
 
 ## kobo-hacks-database
 Web site to browse and download hacks and also to manage them.
