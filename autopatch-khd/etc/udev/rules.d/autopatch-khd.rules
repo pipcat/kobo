@@ -1,1 +1,1 @@
-
+KERNEL=="fsl-usb2-udc", ACTION=="remove", RUN+="/usr/local/AutoPatchKHD/autopatch-khd.sh"
