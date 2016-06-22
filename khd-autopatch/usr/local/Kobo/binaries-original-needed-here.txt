@@ -1,0 +1,8 @@
+You need to copy original binaries from your firmware to this folder, with suffix -original
+
+libnickel.so.1.0.0-original
+libadobe.so-original
+librmsdk.so.1.0.0-original
+
+You can get them from: 
+http://www.mobileread.com/forums/showthread.php?t=185660
