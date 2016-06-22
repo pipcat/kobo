@@ -80,12 +80,12 @@ if [ -f "$1" ]; then
 		else # restore if it's not the original:
 			cmp "$file" "$fileoriginal" >> "$LOG_FILE" && echo "No need to restore $file" >> "$LOG_FILE" && continue
 			cp "$fileoriginal" "$filemodified"
-			echo -e "Restoring original binary $fileoriginal" >> "$LOG_FILE"
+			echo "Restoring original binary $fileoriginal" >> "$LOG_FILE"
 		fi
 		chmod `stat -c %a $file` "$filemodified"
 	done
-	sync
 	echo "----------------------------------------" >> "$LOG_FILE"
+	sync
 
 	# Create KoboRoot.tgz and force reboot
 	tar cvzf /mnt/onboard/.kobo/KoboRoot.tgz --directory=$AUTOPATCH_TEMP ./usr
