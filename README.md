@@ -25,5 +25,5 @@ http://pip.cat/khd
 * Contains all metazoa patches from firmware 3.8.0 until last one.
 * User register/login to manage your own hacks.
 
-## autopatch-khd
-Mod of AutoPatch to be used with KHD website.
+## khd-autopatch
+AutoPatch system to be used with KHD website.
