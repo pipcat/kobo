@@ -45,12 +45,23 @@ USAGE:
 	- Create an empty download.php(.zip) in root folder and an empty file uninstall in .khd-autopatch folder and plug device to usb-charger.
 
 
+REQUIREMENTS:
+-------------
+
+- You need hack "Allow download all in Browser" to download zip files from Kobo browser.
+
+- You need a usb-charger that doesn't prompt as a computer when plugged. Probably your mobile phone charger is ok.
+
+- You are responsible of having need enough disk space to allow patching process.
+	(libnickel + libadobe + librmsdk = 23 mb, KoboRoot = 10 mb)
+
+
 INFO:
 -----
 
 - Launching khd-autopatch:
 
-check script is launched when we plug our device to a usb-charger, but not when we plug to a computer.
+Check script is launched when we plug our device to a usb-charger, but not when we plug to a computer.
 I tested with a powercube 2A and a Motorola mobile charger .85A, and works nice.
 But some people reported different benhaviour and when they plug to usb-charger they get prompted as if connected to a computer. In this case, this method is not valid because autopatch will not be trigered, but maybe could be done similar hooking on "usb_host" rather than "usb_plug".
 
