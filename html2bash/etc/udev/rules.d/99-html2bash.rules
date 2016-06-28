@@ -1,1 +1,1 @@
-
+KERNEL=="usb_plug", ACTION=="add", RUN+="/usr/local/html2bash/check.sh"
