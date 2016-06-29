@@ -27,3 +27,6 @@ http://pip.cat/khd
 
 ## khd-autopatch
 AutoPatch system to be used with KHD website.
+
+## html2bash
+Execute bash scripts from Kobo browser.

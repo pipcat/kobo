@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title>HTML2BASH</title>
+	<script type="text/javascript">
+
+// Default scripts: fill with your needs...
+var SCRIPTS_FOLDER = 'file:///mnt/onboard/.html2bash/scripts/';
+var BASH_FILES = ['empty.sh', 'sample01.sh', 'sample02.sh', 'clean-log.sh', 'ss-on.sh', 'ss-off.sh'];
+
+	</script>
+	<style type="text/css">
+	body {font-size:1.3em;}
+	a {text-decoration:none;}
+	#selBash {padding: 0; list-style-type: none;}
+	#selBash li {display: inline;}
+	#selBash li a {
+		background-color:#000; color:#fff; border-radius:5px;
+		padding: 10px; margin: 0 10px 10px 0;
+		display: block;
+		float:left;
+	}
+	#txtBash {margin:10px 0; padding:5px !important; border:1px solid #000; width:800px; height:300px;}
+	#lnkSave {padding:10px 20px; margin:20px 0; background-color:#000; color:#fff; border-radius:5px;}
+	</style>
+</head>
+<body>
+
+	<form id="frmBash">
+		<ul id="selBash"></ul><div style="clear:both;"></div>
+		<textarea rows="10" id="txtBash">...</textarea>
+		<p><a id="lnkSave">Save file</a> and plug usb-charger after download is done to run the script.</p>
+		<p>After some seconds you can view results in <a href="file:///mnt/onboard/.html2bash/info.log">execution log file</a>.</p>
+		<p id="debug"></p>
+	</form>
+
+	<script type="text/javascript">
+
+		function readTextFile(file) {
+			var rawFile = new XMLHttpRequest();
+			rawFile.open("GET", file, false);
+			rawFile.onreadystatechange = function () {
+				if (rawFile.readyState === 4) {
+					if (rawFile.status === 200 || rawFile.status == 0) {
+						document.getElementById('txtBash').value = rawFile.responseText;
+					}
+				}
+			}
+			rawFile.send(null);
+		}
+
+		// Fill default scripts
+		var l = BASH_FILES.length;
+		for (var i = 0; i < l; i++) {
+			var li = document.createElement("LI");
+			var a = document.createElement('a');
+			var te = document.createTextNode(BASH_FILES[i]);
+			a.appendChild(te);
+			a.href = SCRIPTS_FOLDER+BASH_FILES[i];
+			a.onclick = function () {
+				readTextFile(this.href);
+				return false;
+			};
+			li.appendChild(a);
+			document.getElementById('selBash').appendChild(li);
+		}
+		
+		// Default value first script
+		readTextFile(SCRIPTS_FOLDER+BASH_FILES[0]);
+
+		// Save file:
+		document.getElementById('lnkSave').onclick = function() {
+			var encoded = encodeURIComponent(document.getElementById('txtBash').value);
+			this.href = 'data:application/tmp;charset=utf-8,'+ encoded + '/html2bash.tmp';
+			this.target = '_blank';
+		};
+
+	</script>
+
+</body>
+</html>

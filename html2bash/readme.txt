@@ -42,8 +42,13 @@ INFO:
 -----
 
 https://github.com/pipcat/kobo/tree/master/html2bash
+http://www.mobileread.com/forums/showthread.php?t=275693
 
 - Launching html2bash:
 
 Check script is launched when we plug our device to a usb-charger, but not when we plug to a computer.
-I tested with a powercube 2A and a Motorola mobile charger .85A, and works nice. But some people reported different benhaviour and when they plug to usb-charger they get prompted as if connected to a computer. In this case, this method is not valid because autopatch will not be trigered, but maybe could be done similar hooking on "usb_host" rather than "usb_plug".
+I tested with a powercube 2A and a Motorola mobile charger .85A, and works nice. But some people reported different benhaviour and when they plug to usb-charger they get prompted as if connected to a computer. In this case, this method is not valid because check will not be trigered, but maybe could be done similar hooking on "usb_host" rather than "usb_plug".
+
+- Kobo browser bugs:
+
+Sometimes scripts are downloaded ok and everything goes well, but sometimes there are empty downloads (0 bytes file). Sometimes browser is closed after download, sometimes not. I didn't found the reason...
