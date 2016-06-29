@@ -10,14 +10,17 @@ TMP_FILE="/mnt/onboard/html2bash.tmp"
 if [ -f $TMP_FILE ]; then
 	echo "--------------- $(date +%c) ---------------" >> $LOG_FILE
 
-	SH_FILE="$TMP_FILE".sh
-
-	# remove /html2bash.tmp at end of file, save to .sh, set execution flag, run, delete.
-	sed 's/\/html2bash\.tmp$//g' <$TMP_FILE >$SH_FILE
-	chmod +x $SH_FILE
-	$SH_FILE >> $LOG_FILE 2>&1 & 
+	# If empty file, download failed ;-(
+	if [ ! -s $TMP_FILE ]; then
+		echo "Empty file. Download was not ok." >> "$LOG_FILE"
+	else
+		# remove /html2bash.tmp at end of file, save to .sh, set execution flag, run.
+		SH_FILE="$TMP_FILE".sh
+		sed 's/\/html2bash\.tmp$//g' <$TMP_FILE >$SH_FILE
+		chmod +x $SH_FILE
+		$SH_FILE >> $LOG_FILE 2>&1 & 
+	fi
 	rm $TMP_FILE
-	#~ rm $TMP_FILE $SH_FILE
 fi
 
 
